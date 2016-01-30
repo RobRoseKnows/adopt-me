@@ -34,7 +34,7 @@ public class DogContract {
         public static final String TABLE_NAME = "dogs";
 
         // Column storing dog's name as a string.
-        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_NAME = "dog_name";
         // Column storing dog birthday
         public static final String COLUMN_AGE = "age";
         // Column with date in milliseconds that dog entered shelter
@@ -45,6 +45,11 @@ public class DogContract {
         public static final String COLUMN_SHELTER_KEY = "shelter_id";
         // Imgur album url?
         public static final String COLUMN_ALBUM = "album";
+        // I'm not sure how I'll format this as some shelters will probably have different points
+        // of contact. I'm thinking maybe storing an Intent as JSON or something.
+        public static final String COLUMN_INTEREST = "how_to_adopt";
+        // If the shelter has any sort of internal id system, they can store it here.
+        public static final String COLUMN_INTERNAL = "internal_id";
 
         public static Uri buildDogUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -122,7 +127,7 @@ public class DogContract {
 
         public static final String COLUMN_SNAPCHAT = "snapchat";
 
-        public static final String COLUMN_HASH = "hashtag";
+        public static final String COLUMN_HASHTAG = "hashtag";
 
         public static Uri buildSocialUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
