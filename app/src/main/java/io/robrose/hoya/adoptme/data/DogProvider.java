@@ -60,15 +60,34 @@ public class DogProvider extends ContentProvider {
     //social._id = ?
     private static final String sSocialsByIdSelection =
             DogContract.SocialsEntry.TABLE_NAME+
-                    "." + DogContract.ShelterEntry._ID + " = ? ";
+                    "." + DogContract.SocialsEntry._ID + " = ? ";
 
     //dog._id = ?
     private static final String sDogByIdSelection =
             DogContract.DogEntry.TABLE_NAME +
                     "." + DogContract.DogEntry._ID + " = ? ";
 
+    /**
+     * Wrote this to give a generic handler for the base Uri calls ("dogs", "socials", etc.) so I
+     * could condense the code in the query method. The table parameter defines which table to
+     * query from.
+     * @param table String representing the table name to query from.
+     */
+    private Cursor getGenericQuery(Uri uri, String[] projection, String selection, String[] selectionArgs,
+                                   String sortOrder, String table) {
+        return mOpenHelper.getReadableDatabase().query(
+                table,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
     private Cursor getDogById(Uri uri, String[] projection, String sortOrder) {
-        long id = DogContract.DogEntry.getDogFromId(uri);
+        long id = DogContract.DogEntry.getDogFromUri(uri);
 
         String[] selectionArgs = new String[] {Long.toString(id)};
         String selection = sDogByIdSelection;
@@ -84,19 +103,46 @@ public class DogProvider extends ContentProvider {
         );
     }
 
-    private Cursor getWeatherByLocationSettingAndDate(
-            Uri uri, String[] projection, String sortOrder) {
-        String locationSetting = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
-        long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+    private Cursor getShelterFromCityName(Uri uri, String[] projection, String sortOrder) {
+        String city = DogContract.ShelterEntry.getCityFromUri(uri);
+        String name = DogContract.ShelterEntry.getNameFromUri(uri);
 
-        return sSocialsFromShelterIdBuilder.query(mOpenHelper.getReadableDatabase(),
+        String[] selectionArgs = new String[] {city, name};
+        String selection = sShelterByCityAndNameSelection;
+
+        return mOpenHelper.getReadableDatabase().query(
+                DogContract.ShelterEntry.TABLE_NAME,
                 projection,
-                sLocationSettingAndDaySelection,
-                new String[]{locationSetting, Long.toString(date)},
+                selection,
+                selectionArgs,
                 null,
                 null,
                 sortOrder
         );
+    }
+
+    private Cursor getSocialsFromShelterId(Uri uri, String[] projection, String sortOrder) {
+        long id = DogContract.SocialsEntry.getIdFromUri(uri);
+
+        return sSocialsFromShelterIdBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                sSocialsByIdSelection,
+                new String[]{Long.toString(id)},
+                null,
+                null,
+                sortOrder);
+    }
+
+    private Cursor getShelterFromDogId(Uri uri, String[] projection, String sortOrder) {
+        long id = DogContract.DogEntry.getDogFromUri(uri);
+
+        return sShelterFromDogIdBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                sShelterByIdSelection,
+                new String[]{Long.toString(id)},
+                null,
+                null,
+                sortOrder);
     }
 
     static UriMatcher buildUriMatcher() {
@@ -131,7 +177,6 @@ public class DogProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
 
         switch (match) {
-            // Student: Uncomment and fill out these two cases
             case DOG:
                 return DogContract.DogEntry.CONTENT_TYPE;
             case DOG_FROM_ID:
@@ -161,50 +206,40 @@ public class DogProvider extends ContentProvider {
             // "dog"
             case DOG:
             {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        DogContract.DogEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = getGenericQuery(uri, projection, selection, selectionArgs,
+                        sortOrder, DogContract.DogEntry.TABLE_NAME);
                 break;
             }
             // "dog/#"
             case DOG_FROM_ID: {
-                retCursor = getWeatherByLocationSetting(uri, projection, sortOrder);
+                retCursor = getDogById(uri, projection, sortOrder);
                 break;
             }
             // "shelter"
             case SHELTER: {
-
+                retCursor = getGenericQuery(uri, projection, selection, selectionArgs,
+                        sortOrder, DogContract.ShelterEntry.TABLE_NAME);
                 break;
             }
             // "shelter/#"
             case SHELTER_FROM_DOG: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        WeatherContract.LocationEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = getShelterFromDogId(uri, projection, sortOrder);
                 break;
             }
+            // "shelter/*/*"
             case SHELTER_FROM_CITY_NAME: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        DogContract.ShelterEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = getShelterFromCityName(uri, projection, sortOrder);
+                break;
+            }
+            // "socials"
+            case SOCIALS: {
+                retCursor = getGenericQuery(uri, projection, selection, selectionArgs,
+                        sortOrder, DogContract.SocialsEntry.TABLE_NAME);
+                break;
+            }
+            case SOCIALS_FROM_SHELTER_ID: {
+                retCursor = getSocialsFromShelterId(uri, projection, sortOrder);
+                break;
             }
 
             default:
@@ -224,19 +259,26 @@ public class DogProvider extends ContentProvider {
         Uri returnUri;
 
         switch (match) {
-            case WEATHER: {
-                normalizeDate(values);
-                long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, values);
+            case DOG: {
+                long _id = db.insert(DogContract.DogEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
-                    returnUri = WeatherContract.WeatherEntry.buildWeatherUri(_id);
+                    returnUri = DogContract.DogEntry.buildDogUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
-            case LOCATION: {
-                long _id = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, values);
+            case SHELTER: {
+                long _id = db.insert(DogContract.ShelterEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
-                    returnUri = WeatherContract.LocationEntry.buildLocationUri(_id);
+                    returnUri = DogContract.ShelterEntry.buildShelterUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            case SOCIALS: {
+                long _id = db.insert(DogContract.SocialsEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = DogContract.SocialsEntry.buildSocialUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -256,13 +298,17 @@ public class DogProvider extends ContentProvider {
         // this makes delete all rows return the number of rows deleted
         if ( null == selection ) selection = "1";
         switch (match) {
-            case WEATHER:
+            case DOG:
                 rowsDeleted = db.delete(
-                        WeatherContract.WeatherEntry.TABLE_NAME, selection, selectionArgs);
+                        DogContract.DogEntry.TABLE_NAME, selection, selectionArgs);
                 break;
-            case LOCATION:
+            case SHELTER:
                 rowsDeleted = db.delete(
-                        WeatherContract.LocationEntry.TABLE_NAME, selection, selectionArgs);
+                        DogContract.ShelterEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case SOCIALS:
+                rowsDeleted = db.delete(
+                        DogContract.SocialsEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -274,14 +320,6 @@ public class DogProvider extends ContentProvider {
         return rowsDeleted;
     }
 
-    private void normalizeDate(ContentValues values) {
-        // normalize the date value
-        if (values.containsKey(WeatherContract.WeatherEntry.COLUMN_DATE)) {
-            long dateValue = values.getAsLong(WeatherContract.WeatherEntry.COLUMN_DATE);
-            values.put(WeatherContract.WeatherEntry.COLUMN_DATE, WeatherContract.normalizeDate(dateValue));
-        }
-    }
-
     @Override
     public int update(
             Uri uri, ContentValues values, String selection, String[] selectionArgs) {
@@ -290,20 +328,20 @@ public class DogProvider extends ContentProvider {
         int rowsUpdated;
 
         switch (match) {
-            case WEATHER:
-                normalizeDate(values);
-                rowsUpdated = db.update(WeatherContract.WeatherEntry.TABLE_NAME, values, selection,
-                        selectionArgs);
+            case DOG:
+                rowsUpdated = db.update(
+                        DogContract.DogEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
-            case LOCATION:
-                rowsUpdated = db.update(WeatherContract.LocationEntry.TABLE_NAME, values, selection,
-                        selectionArgs);
+            case SHELTER:
+                rowsUpdated = db.update(
+                        DogContract.ShelterEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case SOCIALS:
+                rowsUpdated = db.update(
+                        DogContract.SocialsEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
-        }
-        if (rowsUpdated != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsUpdated;
     }
@@ -313,13 +351,12 @@ public class DogProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         switch (match) {
-            case WEATHER:
+            case DOG:
                 db.beginTransaction();
                 int returnCount = 0;
                 try {
                     for (ContentValues value : values) {
-                        normalizeDate(value);
-                        long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, value);
+                        long _id = db.insert(DogContract.DogEntry.TABLE_NAME, null, value);
                         if (_id != -1) {
                             returnCount++;
                         }

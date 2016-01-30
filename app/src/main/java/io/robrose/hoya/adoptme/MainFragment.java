@@ -1,6 +1,9 @@
 package io.robrose.hoya.adoptme;
 
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Loader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,7 +21,7 @@ import io.robrose.hoya.adoptme.R;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -90,6 +93,21 @@ public class MainFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
     /**

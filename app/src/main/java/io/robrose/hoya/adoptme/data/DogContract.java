@@ -50,7 +50,7 @@ public class DogContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static long getDogFromId(Uri uri) {
+        public static long getDogFromUri(Uri uri) {
             return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
@@ -126,6 +126,10 @@ public class DogContract {
 
         public static Uri buildSocialUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static long getIdFromUri(Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
 }
