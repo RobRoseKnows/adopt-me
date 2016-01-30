@@ -4,12 +4,15 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 /**
  * Defines table and column names for the Dog database.
  * @author Robert Rose
  */
 public class DogContract {
+    private static final String LOG_TAG = "DOG_CONTRACT";
+
     public static final String CONTENT_AUTHORITY = "io.robrose.hoya.adoptme";
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -46,6 +49,10 @@ public class DogContract {
         public static Uri buildDogUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static long getDogFromId(Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(1));
+        }
     }
 
     public static final class ShelterEntry implements BaseColumns {
@@ -75,6 +82,24 @@ public class DogContract {
 
         public static Uri buildShelterUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static long getDogFromUri(Uri uri) {
+// TODO: Uncomment this error checking and add in proper error checking througout after hackathon.
+//            if(uri.getPathSegments().size() == 2) {
+                return Long.parseLong(uri.getPathSegments().get(1));
+//            } else {
+//                Log.d(LOG_TAG, "Incorrect Uri type assumption. Dog Id is not current Uri format.");
+//                return -1L;
+//            }
+        }
+
+        public static String getCityFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+
+        public static String getNameFromUri(Uri uri) {
+            return uri.getPathSegments().get(2);
         }
     }
 
