@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="397dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView3"
+            android:src="@drawable/icon"
+            android:maxHeight="512px"
+            android:maxWidth="512px"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="name, age"
+            android:id="@+id/textView3"
+            android:textSize="30dp"
+            android:layout_below="@+id/space2"
+            android:layout_alignLeft="@+id/textView5" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="25px"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/space2" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name of Shelter"
+            android:id="@+id/textView5"
+            android:textSize="20dp"
+            android:layout_below="@+id/space3"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="23dp" />
+
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20px"
+            android:layout_below="@+id/textView3"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/space3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="miles"
+            android:id="@+id/textView6"
+            android:textSize="20dp"
+            android:layout_below="@+id/textView5"
+            android:layout_alignLeft="@+id/textView5" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:id="@+id/space"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true" />
+
+
+        <TextView
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:text="Bio"
+            android:id="@+id/textView"
+            android:textSize="30dp"
+            android:layout_below="@+id/space4"
+            android:layout_alignLeft="@+id/textView6" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30px"
+            android:layout_below="@+id/space"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/space4" />
+
+    </RelativeLayout>
+</LinearLayout>
