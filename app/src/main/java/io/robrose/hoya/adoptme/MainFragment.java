@@ -6,20 +6,34 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationServices;
+
 import io.robrose.hoya.adoptme.data.DogContract;
 
-public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor>, ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private SwipeAdapter mSwipeAdapter;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+
+    private static final String LOG_TAG = MainFragment.class.getSimpleName();
 
     private static final String[] DOG_COLUMNS = {
             DogContract.DogEntry.TABLE_NAME + "." + DogContract.DogEntry._ID,
@@ -75,7 +89,21 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+    }
+
+    @Override
     public void onStart() {
+        mGoogleApiClient.connect();
         super.onStart();
 
         // RIP simple calling.
@@ -85,9 +113,13 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 Utility.showRationale(R.string.internet_permission_rationale, getActivity());
 
                 // Now request permission
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.INTERNET}, PERMISSION_REQUEST_INTERNET);
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.INTERNET},
+                        PERMISSION_REQUEST_INTERNET);
             } else {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.INTERNET}, PERMISSION_REQUEST_INTERNET);
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.INTERNET},
+                        PERMISSION_REQUEST_INTERNET);
             }
         } else {
             //Update dogs
@@ -95,11 +127,18 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
+            // Requested permission for INTERNET
             case PERMISSION_REQUEST_INTERNET: {
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Update dogs
+                    // TODO Update dogs
                 } else {
                     // Display something to acknowledge that we can retrieve no dogs.
                 }
@@ -107,12 +146,21 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 return;
             }
 
+            // Requested permission for ACCESS_COARSE_LOCATION
             case PERMISSION_REQUEST_LOCATION: {
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Get a users location.
-                } else {
-                    // TODO Allow user to define a location via text. Probably store that in settings
+                try {
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        // TODO Instruct user on how to turn on GPS.
+                        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                        mSwipeAdapter.setUserLocation(mLastLocation);
+                    } else {
+                        // TODO Allow user to define a location via text. Probably store that in settings
+                    }
+                } catch (SecurityException e) {
+                    Log.d(LOG_TAG, "Permission response was wrong somehow.", e);
                 }
+
+                return;
             }
         }
     }
@@ -146,5 +194,42 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mSwipeAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+
+            if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+                // Show rationale
+                Utility.showRationale(R.string.location_permission_rationale, getActivity());
+
+                // Now request permission
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        PERMISSION_REQUEST_LOCATION);
+
+            } else {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        PERMISSION_REQUEST_LOCATION);
+            }
+        } else {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            mSwipeAdapter.setUserLocation(mLastLocation);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

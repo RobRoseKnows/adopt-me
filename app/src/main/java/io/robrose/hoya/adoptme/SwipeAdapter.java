@@ -2,6 +2,8 @@ package io.robrose.hoya.adoptme;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,8 @@ import org.w3c.dom.Text;
  * Created by Robert on 1/30/2016.
  */
 public class SwipeAdapter extends CursorAdapter {
+
+    Location mUserLocation;
 
     public static class ViewHolder{
         public final ImageView dogPicView;
@@ -36,6 +40,10 @@ public class SwipeAdapter extends CursorAdapter {
         super(context, c, flags);
     }
 
+    public void setUserLocation(Location location) {
+        mUserLocation = location;
+    }
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View view = LayoutInflater.from(context).inflate(R.layout.swipe_item, parent, false);
@@ -51,10 +59,15 @@ public class SwipeAdapter extends CursorAdapter {
 
         String dogName = cursor.getString(MainFragment.COL_DOG_NAME);
         int dogAge = cursor.getInt(MainFragment.COL_AGE);
-        String dogPicUrl = cursor.getString(MainFragment.COL_ALBUM);
+        String dogPicUrl = cursor.getString(MainFragment.COL_ALBUM); // This will eventually be an album rather than a
         String shelterName = cursor.getString(MainFragment.COL_SHELTER_NAME);
+
+        // Get the coordinates
         double dogCoordLat = cursor.getDouble(MainFragment.COL_COORD_LAT);
         double dogCoordLong = cursor.getDouble(MainFragment.COL_COORD_LONG);
+
+        double userCoordLat;
+        double userCoordLong;
 
         viewHolder.nameAgeView.setText(dogName + ", " + Utility.getDisplayableAge(dogAge));
         Picasso.with(context).load(dogPicUrl).centerCrop()
