@@ -1,5 +1,7 @@
 package io.robrose.hoya.adoptme;
+
 import android.content.ContentValues;
+
 import java.util.Random;
 import java.util.Random;
 
@@ -10,8 +12,9 @@ import io.robrose.hoya.adoptme.data.DogContract;
  */
 public class GenerateData {
     private static final String[] handles =
-            {"dog","god","chucky","johnCena","champ","whoischamp",
-                    "mlh","hoya","creative","jacob","dragonslayer","bob"};
+            {"dog", "god", "chucky", "johnCena", "champ", "whoischamp",
+                    "mlh", "hoya", "creative", "jacob", "dragonslayer", "bob"};
+
     public static ContentValues[] generateSocials(int n) {
         ContentValues[] cvs = new ContentValues[n];
         for (int i = 0; i < n; i++) {
@@ -27,6 +30,7 @@ public class GenerateData {
         }
         return cvs;
     }
+
     public static ContentValues[] generateShelters(int n) {
         ContentValues[] cvs = new ContentValues[n];
         for (int i = 0; i < n; i++) {
@@ -43,6 +47,7 @@ public class GenerateData {
         }
         return cvs;
     }
+
     public static ContentValues[] generateDogs(int n, int shelters) {
         ContentValues[] cvs = new ContentValues[n];
         String[] pictures = {"http://i.imgur.com/yR4ykiA.jpg", "http://i.imgur.com/avPgJ9t.jpg",
