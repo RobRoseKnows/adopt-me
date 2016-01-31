@@ -24,6 +24,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 
 import io.robrose.hoya.adoptme.data.DogContract;
+import io.robrose.hoya.adoptme.data.DogDbHelper;
 
 public class MainFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, ConnectionCallbacks,
