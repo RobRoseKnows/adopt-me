@@ -1,85 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="68dp"
-        android:background="#ffffff">
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:id="@+id/swipe_portrait_imageview"
+        android:src="@drawable/dog_wdob" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView2"
-            android:src="@drawable/logoWord"
-            android:layout_alignParentRight="true" />
-    </RelativeLayout>
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="377dp">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/imageView"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/icon" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ffffff">
-
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="name, age"
-            android:id="@+id/textView3"
-            android:textSize="30dp"
-            android:layout_below="@+id/space2"
-            android:layout_alignLeft="@+id/textView5" />
+            android:id="@+id/swipe_name_textview"
+            android:textSize="30dp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Name of Shelter"
-            android:id="@+id/textView5"
-            android:textSize="20dp"
-            android:layout_below="@+id/space3"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="23dp" />
+            android:id="@+id/swipe_shelter_textview"
+            android:textSize="20dp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="miles"
-            android:id="@+id/textView6"
-            android:textSize="20dp"
-            android:layout_below="@+id/textView5"
-            android:layout_alignLeft="@+id/textView5" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="25px"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:id="@+id/space2" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="20px"
-            android:layout_below="@+id/textView3"
-            android:layout_alignParentLeft="true"
-            android:id="@+id/space3" />
-    </RelativeLayout>
-
-
-
-
+            android:id="@+id/swipe_miles_textview"
+            android:textSize="20dp" />
+    </LinearLayout>
 </LinearLayout>

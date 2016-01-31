@@ -1,12 +1,16 @@
 package io.robrose.hoya.adoptme;
 
+import android.Manifest;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,8 +67,54 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     static final int COL_SNAPCHAT = 19;
     static final int COL_HASHTAG = 20;
 
+    private final int PERMISSION_REQUEST_INTERNET = 9;
+    private final int PERMISSION_REQUEST_LOCATION = 19;
+
     public MainFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // RIP simple calling.
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.INTERNET)) {
+                // Show rationale
+                Utility.showRationale(R.string.internet_permission_rationale, getActivity());
+
+                // Now request permission
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.INTERNET}, PERMISSION_REQUEST_INTERNET);
+            } else {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.INTERNET}, PERMISSION_REQUEST_INTERNET);
+            }
+        } else {
+            //Update dogs
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_INTERNET: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Update dogs
+                } else {
+                    // Display something to acknowledge that we can retrieve no dogs.
+                }
+
+                return;
+            }
+
+            case PERMISSION_REQUEST_LOCATION: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Get a users location.
+                } else {
+                    // TODO Allow user to define a location via text. Probably store that in settings
+                }
+            }
+        }
     }
 
     @Override
@@ -82,7 +132,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         return new CursorLoader(getActivity(),
                 getDogsUri,
-                null, // TODO: Add the column thing later
+                DOG_COLUMNS,
                 null,
                 null,
                 sortOrder);

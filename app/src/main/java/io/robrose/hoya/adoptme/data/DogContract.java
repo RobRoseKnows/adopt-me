@@ -35,7 +35,7 @@ public class DogContract {
 
         // Column storing dog's name as a string.
         public static final String COLUMN_NAME = "dog_name";
-        // Column storing dog birthday
+        // Column storing dogs age in months
         public static final String COLUMN_AGE = "age";
         // Column with date in milliseconds that dog entered shelter
         public static final String COLUMN_ENTERED = "date_entered";
