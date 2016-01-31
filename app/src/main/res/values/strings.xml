@@ -1,10 +1,9 @@
-<resources>
-    <string name="app_name">Adopt Me</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
+    <string name="app_name">Fetch.Me</string>
 
     <string name="internet_permission_rationale">FetchMe needs to connect to the internet to retrieve new lists of dogs.</string>
-
     <string name="location_permission_rationale">FetchMe needs to access your approximate location to find nearby dogs.</string>
+
+    <string name="format_city_name"><xliff:g id="shelter_name">%s</xliff:g> in <xliff:g id="city">%s</xliff:g></string>
+    <string name="format_name_age"><xliff:g id="dog_name">%s</xliff:g>, <xliff:g id="age">%s</xliff:g></string>
 </resources>

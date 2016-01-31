@@ -40,4 +40,26 @@ public class Utility {
         rationaleAlert.create().show();
 
     }
+
+    /**
+     * This function uses the Haversine formula to make a much faster (but slightly less accurate)
+     * distance between two coordinates on a globe.
+     * @param lat1 Latitude of Point 1
+     * @param lon1 Longitude of Point 1
+     * @param lat2 Latitude of Point 2
+     * @param lon2 Longitude of Point 2
+     * @return A double representing the distance in kilometers.
+     */
+    public static double roughPointDistance(double lat1, double lon1, double lat2, double lon2) {
+        // Approximate Equirectangular -- works if (lat1,lon1) ~ (lat2,lon2)
+        // Thanks to Laurent on SO: http://stackoverflow.com/a/4339615/1021259
+        int R = 6371; // km
+        double x = (lon2 - lon1) * Math.cos((lat1 + lat2) / 2);
+        double y = (lat2 - lat1);
+        return Math.sqrt(x * x + y * y) * R;
+    }
+
+    public static double convertToMiles(double kms) {
+        return kms * 0.62137;
+    }
 }

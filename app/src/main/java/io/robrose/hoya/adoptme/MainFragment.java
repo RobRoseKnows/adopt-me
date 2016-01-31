@@ -22,9 +22,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
+import com.nirhart.parallaxscroll.views.ParallaxListView;
 
 import io.robrose.hoya.adoptme.data.DogContract;
-import io.robrose.hoya.adoptme.data.DogDbHelper;
+
 
 public class MainFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, ConnectionCallbacks,
@@ -33,6 +34,7 @@ public class MainFragment extends Fragment implements
     private SwipeAdapter mSwipeAdapter;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
+    private ParallaxListView mParallaxListView;
 
     private static final String LOG_TAG = MainFragment.class.getSimpleName();
 
@@ -170,6 +172,8 @@ public class MainFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mSwipeAdapter = new SwipeAdapter(getActivity(), null, 0);
+        mParallaxListView = (ParallaxListView) rootView.findViewById(R.id.parallax_list_view);
+        mParallaxListView.setAdapter(mSwipeAdapter);
 
         return rootView;
     }
