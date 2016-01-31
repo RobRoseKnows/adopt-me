@@ -3,6 +3,7 @@ package io.robrose.hoya.adoptme;
 import android.Manifest;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -38,6 +40,7 @@ public class MainFragment extends Fragment implements
 
     private static final String LOG_TAG = MainFragment.class.getSimpleName();
 
+    // I really wish I could minimize this.
     private static final String[] DOG_COLUMNS = {
             DogContract.DogEntry.TABLE_NAME + "." + DogContract.DogEntry._ID,
             DogContract.DogEntry.COLUMN_NAME,
@@ -175,7 +178,24 @@ public class MainFragment extends Fragment implements
         mParallaxListView = (ParallaxListView) rootView.findViewById(R.id.parallax_list_view);
         mParallaxListView.setAdapter(mSwipeAdapter);
 
+        mParallaxListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                long _id = cursor.getLong(COL_DOG_ID);
+                if(cursor != null) {
+                    Intent intent = new Intent(getActivity(), DetailActivity.class)
+                            .setData(DogContract.DogEntry.buildDogUri(_id));
+                    startActivity(intent);
+                }
+            }
+        });
+
         return rootView;
+    }
+
+    public Location getUserLocation() {
+        return mLastLocation;
     }
 
     @Override

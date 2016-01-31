@@ -135,16 +135,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             String formattedNameCity = getString(R.string.format_city_name, shelterName, shelterCity);
             mShelterView.setText(formattedNameCity);
 
+            // Get all the coordinates.
             double dogCoordLat = data.getDouble(COL_COORD_LAT);
             double dogCoordLong = data.getDouble(COL_COORD_LONG);
-
             double userCoordLat = mUserLocation.getLatitude();
             double userCoordLong = mUserLocation.getLongitude();
 
+            // Estimate the distance.
             double distanceInMiles = Utility.convertToMiles(
                     Utility.roughPointDistance(dogCoordLat, dogCoordLong, userCoordLat, userCoordLong));
             String distanceString = getString(R.string.format_distance_miles, distanceInMiles);
             mDistanceView.setText(distanceString);
+
+            String dogBio = data.getString(COL_DOG_BIO);
+            mBioView.setText(dogBio);
         }
     }
 
