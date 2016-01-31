@@ -3,4 +3,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="internet_permission_rationale">FetchMe needs to connect to the internet to retrieve new lists of dogs.</string>
+
+    <string name="location_permission_rationale">FetchMe needs to access your approximate location to find nearby dogs.</string>
 </resources>

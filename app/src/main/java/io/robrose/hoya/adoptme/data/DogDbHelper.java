@@ -36,6 +36,8 @@ public class DogDbHelper extends SQLiteOpenHelper {
                 DogEntry.COLUMN_BIO + " TEXT NOT NULL, " +
                 DogEntry.COLUMN_SHELTER_KEY + " INTEGER NOT NULL, " +
                 DogEntry.COLUMN_ALBUM + " TEXT NOT NULL, " +
+                DogEntry.COLUMN_INTEREST + " TEXT NOT NULL, " +
+                DogEntry.COLUMN_INTERNAL + " TEXT, " +
                 // Set up the shelter column as a foreign key to location table.
                 " FOREIGN KEY (" + DogEntry.COLUMN_SHELTER_KEY + ") REFERENCES " +
                 ShelterEntry.TABLE_NAME + " (" + ShelterEntry._ID + ") " +
@@ -74,7 +76,7 @@ public class DogDbHelper extends SQLiteOpenHelper {
                 SocialsEntry.COLUMN_INSTAGRAM + " TEXT, " +
                 SocialsEntry.COLUMN_TWITTER + " TEXT, " +
                 SocialsEntry.COLUMN_SNAPCHAT + " TEXT, " +
-                SocialsEntry.COLUMN_HASH + " TEXT " +
+                SocialsEntry.COLUMN_HASHTAG + " TEXT " +
                 " );";
 
         sqLiteDatabase.execSQL(SQL_CREATE_SOCIALS_TABLE);
