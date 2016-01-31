@@ -1,10 +1,8 @@
 package io.robrose.hoya.adoptme;
 
 import android.Manifest;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
+
 import android.content.Intent;
-import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
@@ -18,6 +16,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ListView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -36,7 +39,9 @@ public class MainFragment extends Fragment implements
     private SwipeAdapter mSwipeAdapter;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-    private ParallaxListView mParallaxListView;
+    private ListView mParallaxListView;
+
+    private final int DOG_LOADER_ID = 101;
 
     private static final String LOG_TAG = MainFragment.class.getSimpleName();
 
@@ -105,12 +110,15 @@ public class MainFragment extends Fragment implements
                     .addApi(LocationServices.API)
                     .build();
         }
+        updateDogs();
     }
 
     @Override
     public void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
+
+
 
         // RIP simple calling.
         if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
@@ -137,6 +145,8 @@ public class MainFragment extends Fragment implements
         mGoogleApiClient.disconnect();
         super.onStop();
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -175,7 +185,7 @@ public class MainFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mSwipeAdapter = new SwipeAdapter(getActivity(), null, 0);
-        mParallaxListView = (ParallaxListView) rootView.findViewById(R.id.parallax_list_view);
+        mParallaxListView = (ListView) rootView.findViewById(R.id.parallax_list_view);
         mParallaxListView.setAdapter(mSwipeAdapter);
 
         mParallaxListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -192,6 +202,15 @@ public class MainFragment extends Fragment implements
         });
 
         return rootView;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(DOG_LOADER_ID, savedInstanceState, this);
+    }
+
+    private void updateDogs() {
+        getLoaderManager().restartLoader(DOG_LOADER_ID, null, this);
     }
 
     public Location getUserLocation() {

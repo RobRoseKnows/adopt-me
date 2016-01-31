@@ -1,13 +1,13 @@
 package io.robrose.hoya.adoptme;
 
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +22,8 @@ import io.robrose.hoya.adoptme.data.DogContract;
  * Created by Robert on 1/31/2016.
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final int DETAIL_LOADER = 101;
 
     // TODO: optimize the columns that are requested. I don't need all these but I'm getting them because I can.
     private static final String[] DOG_COLUMNS = {
@@ -93,6 +95,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mBioView = (TextView) rootView.findViewById(R.id.bio_textview);
 
         return rootView;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override

@@ -16,7 +16,7 @@ import io.robrose.hoya.adoptme.data.DogContract.SocialsEntry;
 public class DogDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     static final String DATABASE_NAME = "adopt.db";
 
@@ -28,20 +28,18 @@ public class DogDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // Create a table to hold locations.  A location consists of the string supplied in the
         // location setting, the city name, and the latitude and longitude
-        final String SQL_CREATE_DOG_TABLE = "CREATE TABLE " + DogEntry.TABLE_NAME + " (" +
-                DogEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                DogEntry.COLUMN_NAME + " TEXT NOT NULL, " +
-                DogEntry.COLUMN_ENTERED + " INTEGER NOT NULL, " +
-                DogEntry.COLUMN_AGE + " INTEGER NOT NULL, " +
-                DogEntry.COLUMN_BIO + " TEXT NOT NULL, " +
-                DogEntry.COLUMN_SHELTER_KEY + " INTEGER NOT NULL, " +
-                DogEntry.COLUMN_ALBUM + " TEXT NOT NULL, " +
-                DogEntry.COLUMN_INTEREST + " TEXT NOT NULL, " +
-                DogEntry.COLUMN_INTERNAL + " TEXT, " +
-                // Set up the shelter column as a foreign key to location table.
-                " FOREIGN KEY (" + DogEntry.COLUMN_SHELTER_KEY + ") REFERENCES " +
-                ShelterEntry.TABLE_NAME + " (" + ShelterEntry._ID + ") " +
+
+        final String SQL_CREATE_SOCIALS_TABLE = "CREATE TABLE " + SocialsEntry.TABLE_NAME + " (" +
+                SocialsEntry._ID + " INTEGER PRIMARY KEY," +
+
+                SocialsEntry.COLUMN_FACEBOOK + " TEXT, " +
+                SocialsEntry.COLUMN_INSTAGRAM + " TEXT, " +
+                SocialsEntry.COLUMN_TWITTER + " TEXT, " +
+                SocialsEntry.COLUMN_SNAPCHAT + " TEXT, " +
+                SocialsEntry.COLUMN_HASHTAG + " TEXT " +
                 " );";
+
+        sqLiteDatabase.execSQL(SQL_CREATE_SOCIALS_TABLE);
 
         final String SQL_CREATE_SHELTER_TABLE = "CREATE TABLE " + ShelterEntry.TABLE_NAME + " (" +
                 // Why AutoIncrement here, and not above?
@@ -69,18 +67,23 @@ public class DogDbHelper extends SQLiteOpenHelper {
                 " UNIQUE (" + ShelterEntry.COLUMN_NAME + ", " +
                 ShelterEntry.COLUMN_CITY + ") ON CONFLICT REPLACE);";
 
-        final String SQL_CREATE_SOCIALS_TABLE = "CREATE TABLE " + ShelterEntry.TABLE_NAME + " (" +
-                SocialsEntry._ID + " INTEGER PRIMARY KEY," +
+        sqLiteDatabase.execSQL(SQL_CREATE_SHELTER_TABLE);
 
-                SocialsEntry.COLUMN_FACEBOOK + " TEXT, " +
-                SocialsEntry.COLUMN_INSTAGRAM + " TEXT, " +
-                SocialsEntry.COLUMN_TWITTER + " TEXT, " +
-                SocialsEntry.COLUMN_SNAPCHAT + " TEXT, " +
-                SocialsEntry.COLUMN_HASHTAG + " TEXT " +
+        final String SQL_CREATE_DOG_TABLE = "CREATE TABLE " + DogEntry.TABLE_NAME + " (" +
+                DogEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                DogEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                DogEntry.COLUMN_ENTERED + " INTEGER NOT NULL, " +
+                DogEntry.COLUMN_AGE + " INTEGER NOT NULL, " +
+                DogEntry.COLUMN_BIO + " TEXT NOT NULL, " +
+                DogEntry.COLUMN_SHELTER_KEY + " INTEGER NOT NULL, " +
+                DogEntry.COLUMN_ALBUM + " TEXT NOT NULL, " +
+                DogEntry.COLUMN_INTEREST + " TEXT NOT NULL, " +
+                DogEntry.COLUMN_INTERNAL + " TEXT, " +
+                // Set up the shelter column as a foreign key to location table.
+                " FOREIGN KEY (" + DogEntry.COLUMN_SHELTER_KEY + ") REFERENCES " +
+                ShelterEntry.TABLE_NAME + " (" + ShelterEntry._ID + ") " +
                 " );";
 
-        sqLiteDatabase.execSQL(SQL_CREATE_SOCIALS_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_SHELTER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_DOG_TABLE);
     }
 

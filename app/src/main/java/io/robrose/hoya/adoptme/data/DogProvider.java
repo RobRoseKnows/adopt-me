@@ -148,18 +148,17 @@ public class DogProvider extends ContentProvider {
     static UriMatcher buildUriMatcher() {
 
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority = DogContract.CONTENT_AUTHORITY;
 
         // For each type of URI you want to add, create a corresponding code.
-        matcher.addURI(authority, DogContract.PATH_DOG, DOG);
-        matcher.addURI(authority, DogContract.PATH_DOG + "/#", DOG_FROM_ID);
+        matcher.addURI(DogContract.CONTENT_AUTHORITY, DogContract.PATH_DOG, DOG);
+        matcher.addURI(DogContract.CONTENT_AUTHORITY, DogContract.PATH_DOG + "/#", DOG_FROM_ID);
 
-        matcher.addURI(authority, DogContract.PATH_SHELTER, SHELTER);
-        matcher.addURI(authority, DogContract.PATH_SHELTER + "/#", SHELTER_FROM_DOG);
-        matcher.addURI(authority, DogContract.PATH_SHELTER + "/*/*", SHELTER_FROM_CITY_NAME);
+        matcher.addURI(DogContract.CONTENT_AUTHORITY, DogContract.PATH_SHELTER, SHELTER);
+        matcher.addURI(DogContract.CONTENT_AUTHORITY, DogContract.PATH_SHELTER + "/#", SHELTER_FROM_DOG);
+        matcher.addURI(DogContract.CONTENT_AUTHORITY, DogContract.PATH_SHELTER + "/*/*", SHELTER_FROM_CITY_NAME);
 
-        matcher.addURI(authority, DogContract.PATH_SOCIALS, SOCIALS);
-        matcher.addURI(authority, DogContract.PATH_SOCIALS + "/#", SOCIALS_FROM_SHELTER_ID);
+        matcher.addURI(DogContract.CONTENT_AUTHORITY, DogContract.PATH_SOCIALS, SOCIALS);
+        matcher.addURI(DogContract.CONTENT_AUTHORITY, DogContract.PATH_SOCIALS + "/#", SOCIALS_FROM_SHELTER_ID);
 
         return matcher;
     }
@@ -343,6 +342,10 @@ public class DogProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
+        if(rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return rowsUpdated;
     }
 
@@ -350,13 +353,43 @@ public class DogProvider extends ContentProvider {
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
+        int returnCount = 0;
         switch (match) {
             case DOG:
                 db.beginTransaction();
-                int returnCount = 0;
                 try {
                     for (ContentValues value : values) {
                         long _id = db.insert(DogContract.DogEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return returnCount;
+            case SHELTER:
+                db.beginTransaction();
+                try {
+                    for (ContentValues value : values) {
+                        long _id = db.insert(DogContract.ShelterEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return returnCount;
+            case SOCIALS:
+                db.beginTransaction();
+                try {
+                    for (ContentValues value : values) {
+                        long _id = db.insert(DogContract.SocialsEntry.TABLE_NAME, null, value);
                         if (_id != -1) {
                             returnCount++;
                         }
