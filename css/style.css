@@ -1,14 +1,10 @@
-
-/* Makes images fully responsive */
-.carousel-inner {
-    max-height: 500px;
-}
 .img-responsive,
 .thumbnail  img,
 .thumbnail a  img,
 .carousel-inner  .item  img,
 .carousel-inner  .item  a  
-img {
+img 
+{
   display: block;
   width: 100%;
   /*  max-width: 400px; */
@@ -25,15 +21,20 @@ img {
     padding: 0px !important;
     margin: 0px !important;
 }
-.col-sm-4 {
+.container{
+    background: rgba(254,100,46,.7);
+}
+.col-sm-4, .col-sm-offset-4 {
     border-radius: 20px;
     background: rgba(255,255,255,1);
     padding: 2px; 
     width: auto;
-        max-width: 420px;
+    max-width: 420px;
     height: 300px;
     margin: 20px;
+    text-align:center;
 }
+
 .carousel-inner .carousel-caption {
     bottom: 70% !important
 }
