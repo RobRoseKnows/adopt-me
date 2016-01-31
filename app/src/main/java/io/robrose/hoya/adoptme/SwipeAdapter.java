@@ -72,9 +72,11 @@ public class SwipeAdapter extends CursorAdapter {
 
         double distanceInMiles = Utility.convertToMiles(
                 Utility.roughPointDistance(dogCoordLat, dogCoordLong, userCoordLat, userCoordLong));
+        String distanceString = context.getString(R.string.format_distance_miles, distanceInMiles);
+        viewHolder.distanceView.setText(distanceString);
 
         viewHolder.nameAgeView.setText(context.getString(R.string.format_name_age, dogName, Utility.getDisplayableAge(dogAge)));
-        Picasso.with(context).load(dogPicUrl).centerCrop()
+        Picasso.with(context).load(dogPicUrl).fit().centerCrop()
                 .placeholder(R.drawable.dog_wdob)
                 .into(viewHolder.dogPicView);
         viewHolder.shelterNameView.setText(context.getString(R.string.format_city_name, shelterName, shelterCity));

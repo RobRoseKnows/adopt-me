@@ -6,4 +6,5 @@
 
     <string name="format_city_name"><xliff:g id="shelter_name">%s</xliff:g> in <xliff:g id="city">%s</xliff:g></string>
     <string name="format_name_age"><xliff:g id="dog_name">%s</xliff:g>, <xliff:g id="age">%s</xliff:g></string>
+    <string name="format_distance_miles"><xliff:g id="miles">%.1f</xliff:g> miles</string>
 </resources>
